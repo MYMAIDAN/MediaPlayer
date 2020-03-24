@@ -37,6 +37,8 @@ if(ANDROID)
     mediafilessearchengine.h
     playerconctrols.cpp
     playerconctrols.h
+    playlisthandler.cpp
+    playlisthandler.h
   )
 else()
   add_executable(MediaPlayer
@@ -50,6 +52,8 @@ else()
     playlistmodel.cpp
     playerconctrols.cpp
     playerconctrols.h
+    playlisthandler.cpp
+    playlisthandler.h
   )
 endif()
 

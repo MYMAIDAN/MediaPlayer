@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QAbstractListModel>
+#include <QMediaPlaylist>
 
 class PlayListModel : public QAbstractListModel
 {

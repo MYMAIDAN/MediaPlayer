@@ -10,6 +10,7 @@ Player::Player(QWidget *parent)
       mPlayListModel(std::make_unique<PlayListModel>()),
       mMediaFilesSearchEngine(std::make_unique<MediaFilesSearchEngine>()),
       mPlayerControls(std::make_unique<PlayerControls>(this)),
+      m_PlayListHandler(std::make_unique<PlayListHandler>()),
       mMediaPlayer(std::make_unique<QMediaPlayer>())
 {
 
@@ -24,6 +25,21 @@ Player::Player(QWidget *parent)
 
   QObject::connect( mMediaFilesSearchEngine.get(), &MediaFilesSearchEngine::findMediaFile,
                     mPlayListModel.get(),          &PlayListModel::addNewMediaFile );
+
+  QObject::connect( mMediaFilesSearchEngine.get(), &MediaFilesSearchEngine::findMediaFile,
+                    m_PlayListHandler.get(),       &PlayListHandler::addMediaFile );
+
+  QObject::connect(mPlayerControls.get(), &PlayerControls::play,
+                   mMediaPlayer.get(),    &QMediaPlayer::play );
+
+  QObject::connect(mPlayerControls.get(), &PlayerControls::next,
+                   m_PlayListHandler.get(), &PlayListHandler::next );
+
+  QObject::connect(mPlayerControls.get(),&PlayerControls::previous,
+                   m_PlayListHandler.get(), &PlayListHandler::previous);
+
+  mMediaPlayer->setPlaylist( m_PlayListHandler.get() );
+
 
   searchEngineThread->start();
 
@@ -51,8 +67,10 @@ Player::~Player()
 
 void Player::playMusic(const QModelIndex &index)
 {
-  QUrl url = index.data().toUrl();
-  mMediaPlayer->setMedia(QUrl::fromLocalFile(index.data().toUrl().path()));
+  QMediaPlaylist playlist;
+  playlist.addMedia(QUrl::fromLocalFile(index.data().toUrl().path()));
+ // mMediaPlayer->setMedia(QUrl::fromLocalFile(index.data().toUrl().path()));
+  mMediaPlayer->setPlaylist(&playlist);
   mMediaPlayer->setVolume(50);
   mMediaPlayer->play();
 }

@@ -70,7 +70,7 @@ beginInsertRows(QModelIndex(),m_Data.size()-1,m_Data.size()-1);
   QFileInfo file(path);
 
 endInsertRows();
-  qDebug() <<   file.fileName();
+  qDebug() <<   file;
 }
 
 void PlayListModel::play(const QModelIndex& index)

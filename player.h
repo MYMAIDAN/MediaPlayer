@@ -9,6 +9,7 @@
 #include "playlistmodel.h"
 #include "mediafilessearchengine.h"
 #include "playerconctrols.h"
+#include "playlisthandler.h"
 
 class Player : public QWidget
 {
@@ -24,8 +25,8 @@ private:
     std::unique_ptr<PlayListModel>          mPlayListModel;
     std::unique_ptr<MediaFilesSearchEngine> mMediaFilesSearchEngine;
     std::unique_ptr<PlayerControls>         mPlayerControls;
+    std::unique_ptr<PlayListHandler>        m_PlayListHandler;
     std::unique_ptr<QMediaPlayer>           mMediaPlayer;
-
 
 };
 #endif // PLAYER_H
