@@ -35,10 +35,23 @@ Player::Player(QWidget *parent)
   QObject::connect(mPlayerControls.get(), &PlayerControls::next,
                    m_PlayListHandler.get(), &PlayListHandler::next );
 
-  QObject::connect(mPlayerControls.get(),&PlayerControls::previous,
-                   m_PlayListHandler.get(), &PlayListHandler::previous);
+  QObject::connect( mPlayerControls.get(),   &PlayerControls::previous,
+                    m_PlayListHandler.get(), &PlayListHandler::previous );
+
+  QObject::connect(mPlayerControls.get(), &PlayerControls::changeVolume,
+                   mMediaPlayer.get(), &QMediaPlayer::setVolume );
+
+  QObject::connect( mMediaPlayer.get(), &QMediaPlayer::volumeChanged,
+                    mPlayerControls.get(), &PlayerControls::setVolume );
+
+  QObject::connect(mPlayerControls.get(), &PlayerControls::durationChanged,this, &Player::seek);
+  QObject::connect(mMediaPlayer.get(),&QMediaPlayer::positionChanged,mPlayerControls.get(),&PlayerControls::positionChanged);
+  QObject::connect(mMediaPlayer.get(),&QMediaPlayer::durationChanged,mPlayerControls.get(),&PlayerControls::setDuration);
+
 
   mMediaPlayer->setPlaylist( m_PlayListHandler.get() );
+
+  mPlayerControls->setVolume(mMediaPlayer->volume());
 
 
   searchEngineThread->start();
@@ -51,11 +64,11 @@ Player::Player(QWidget *parent)
   listLayout->addWidget(listView);
   QBoxLayout *controlLayout = new QHBoxLayout;
   controlLayout->setContentsMargins(0, 0, 0, 0);
-  controlLayout->addStretch(1);
+  //controlLayout->addStretch(1);
   controlLayout->addWidget(mPlayerControls.get());
 
   QBoxLayout *layout = new QVBoxLayout;
-  layout->addLayout(controlLayout);
+  layout->addWidget(mPlayerControls.get());
   layout->addLayout(listLayout);
 
   setLayout(layout);
@@ -73,5 +86,10 @@ void Player::playMusic(const QModelIndex &index)
   mMediaPlayer->setPlaylist(&playlist);
   mMediaPlayer->setVolume(50);
   mMediaPlayer->play();
+}
+
+void Player::seek(uint64_t milisecond)
+{
+  mMediaPlayer->setPosition(milisecond*1000);
 }
 

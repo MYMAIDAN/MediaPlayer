@@ -35,8 +35,8 @@ if(ANDROID)
     playlistmodel.h
     mediafilessearchengine.cpp
     mediafilessearchengine.h
-    playerconctrols.cpp
-    playerconctrols.h
+    playercontrols.cpp
+    playercontrols.h
     playlisthandler.cpp
     playlisthandler.h
   )
@@ -50,8 +50,8 @@ else()
     mediafilessearchengine.cpp
     mediafilessearchengine.h
     playlistmodel.cpp
-    playerconctrols.cpp
-    playerconctrols.h
+    playercontrols.cpp
+    playercontrols.h
     playlisthandler.cpp
     playlisthandler.h
   )

@@ -48,7 +48,7 @@
 **
 ****************************************************************************/
 
-#include "playerconctrols.h"
+#include "playercontrols.h"
 
 #include <QBoxLayout>
 #include <QSlider>
@@ -91,6 +91,12 @@ PlayerControls::PlayerControls(QWidget *parent)
 
     connect(m_volumeSlider, &QSlider::valueChanged, this, &PlayerControls::onVolumeSliderValueChanged);
 
+    m_durationSlider = new QSlider(Qt::Horizontal,this);
+    m_durationSlider->setEnabled(true);
+    m_durationSlider->setSliderDown(true);
+
+    connect(m_durationSlider,&QAbstractSlider::sliderMoved,this, &PlayerControls::durationChanged);
+
     m_rateBox = new QComboBox(this);
     m_rateBox->addItem("0.5x", QVariant(0.5));
     m_rateBox->addItem("1.0x", QVariant(1.0));
@@ -108,6 +114,7 @@ PlayerControls::PlayerControls(QWidget *parent)
     layout->addWidget(m_muteButton);
     layout->addWidget(m_volumeSlider);
     layout->addWidget(m_rateBox);
+    layout->addWidget(m_durationSlider,1);
     setLayout(layout);
 }
 
@@ -217,4 +224,14 @@ void PlayerControls::updateRate()
 void PlayerControls::onVolumeSliderValueChanged()
 {
     emit changeVolume(volume());
+}
+
+void PlayerControls::setDuration(uint64_t milisecond)
+{
+  m_durationSlider->setRange(0,milisecond/1000);
+}
+
+void PlayerControls::positionChanged(uint64_t milisecond)
+{
+ m_durationSlider->setValue(milisecond/1000);
 }

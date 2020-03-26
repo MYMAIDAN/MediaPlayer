@@ -10,3 +10,5 @@ void PlayListHandler::addMediaFile(const QString &filePath)
 {
   this->addMedia(QUrl::fromLocalFile(filePath));
 }
+
+

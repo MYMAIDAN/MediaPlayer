@@ -8,7 +8,7 @@
 
 #include "playlistmodel.h"
 #include "mediafilessearchengine.h"
-#include "playerconctrols.h"
+#include "playercontrols.h"
 #include "playlisthandler.h"
 
 class Player : public QWidget
@@ -21,6 +21,7 @@ public:
 
 public slots:
     void playMusic( const QModelIndex& index );
+    void seek(uint64_t milisecond);
 private:
     std::unique_ptr<PlayListModel>          mPlayListModel;
     std::unique_ptr<MediaFilesSearchEngine> mMediaFilesSearchEngine;
