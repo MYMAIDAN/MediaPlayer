@@ -20,36 +20,39 @@ Player::Player(QWidget *parent)
   QThread* searchEngineThread = new QThread();
   mMediaFilesSearchEngine->moveToThread( searchEngineThread );
 
-  QObject::connect( searchEngineThread,            &QThread::started,
+  connect( searchEngineThread,            &QThread::started,
                     mMediaFilesSearchEngine.get(), &MediaFilesSearchEngine::search );
 
-  QObject::connect( mMediaFilesSearchEngine.get(), &MediaFilesSearchEngine::findMediaFile,
+  connect( mMediaFilesSearchEngine.get(), &MediaFilesSearchEngine::findMediaFile,
                     mPlayListModel.get(),          &PlayListModel::addNewMediaFile );
 
-  QObject::connect( mMediaFilesSearchEngine.get(), &MediaFilesSearchEngine::findMediaFile,
+  connect( mMediaFilesSearchEngine.get(), &MediaFilesSearchEngine::findMediaFile,
                     m_PlayListHandler.get(),       &PlayListHandler::addMediaFile );
 
-  QObject::connect(mPlayerControls.get(), &PlayerControls::play,
-                   mMediaPlayer.get(),    &QMediaPlayer::play );
+  connect(mPlayerControls.get(), &PlayerControls::play, mMediaPlayer.get(),&QMediaPlayer::play );
 
-  QObject::connect(mPlayerControls.get(), &PlayerControls::next,
-                   m_PlayListHandler.get(), &PlayListHandler::next );
+  connect(mPlayerControls.get(),&PlayerControls::pause, mMediaPlayer.get(),&QMediaPlayer::pause);
 
-  QObject::connect( mPlayerControls.get(),   &PlayerControls::previous,
-                    m_PlayListHandler.get(), &PlayListHandler::previous );
+  connect(mPlayerControls.get(), &PlayerControls::next, m_PlayListHandler.get(), &PlayListHandler::next );
 
-  QObject::connect(mPlayerControls.get(), &PlayerControls::changeVolume,
-                   mMediaPlayer.get(), &QMediaPlayer::setVolume );
+  connect( mPlayerControls.get(),&PlayerControls::previous, m_PlayListHandler.get(), &PlayListHandler::previous );
 
-  QObject::connect( mMediaPlayer.get(), &QMediaPlayer::volumeChanged,
-                    mPlayerControls.get(), &PlayerControls::setVolume );
+  connect(mPlayerControls.get(), &PlayerControls::changeVolume, mMediaPlayer.get(), &QMediaPlayer::setVolume );
 
-  QObject::connect(mPlayerControls.get(), &PlayerControls::durationChanged,this, &Player::seek);
-  QObject::connect(mMediaPlayer.get(),&QMediaPlayer::positionChanged,mPlayerControls.get(),&PlayerControls::positionChanged);
-  QObject::connect(mMediaPlayer.get(),&QMediaPlayer::durationChanged,mPlayerControls.get(),&PlayerControls::setDuration);
+  connect( mMediaPlayer.get(), &QMediaPlayer::volumeChanged, mPlayerControls.get(), &PlayerControls::setVolume );
+
+  connect(mPlayerControls.get(),&PlayerControls::changeMuting, mMediaPlayer.get(), &QMediaPlayer::setMuted);
+  connect(mMediaPlayer.get(),&QMediaPlayer::mutedChanged,mPlayerControls.get(),&PlayerControls::setMuted);
+  connect(mMediaPlayer.get(),&QMediaPlayer::stateChanged, mPlayerControls.get(),&PlayerControls::setState);
+
+  connect(mPlayerControls.get(), &PlayerControls::durationChanged,this, &Player::seek);
+  connect(mMediaPlayer.get(),&QMediaPlayer::positionChanged,mPlayerControls.get(),&PlayerControls::positionChanged);
+  connect(mMediaPlayer.get(),&QMediaPlayer::durationChanged,mPlayerControls.get(),&PlayerControls::setDuration);
 
 
   mMediaPlayer->setPlaylist( m_PlayListHandler.get() );
+  mMediaPlayer->setMuted(mPlayerControls->isMuted());
+  mPlayerControls->setState(mMediaPlayer->state());
 
   mPlayerControls->setVolume(mMediaPlayer->volume());
 
