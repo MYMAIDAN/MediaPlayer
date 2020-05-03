@@ -3,6 +3,7 @@
 #include <QFileInfo>
 #include <QMediaPlayer>
 #include <QMediaMetaData>
+#include <QDir>
 
 PlayListModel::PlayListModel(const QStringList &list, QObject *parent):
   QAbstractTableModel(parent)
@@ -11,7 +12,7 @@ PlayListModel::PlayListModel(const QStringList &list, QObject *parent):
 
 PlayListModel::PlayListModel(QObject *parent):
   QAbstractTableModel(parent),
-  m_HeaderSectionTitle({"Titile","AlbumArtist","TrackNumber","Genre","Year"})
+  m_HeaderSectionTitle({"TrackName","Folder","Type","Size"})
 {
 }
 
@@ -38,15 +39,13 @@ QVariant PlayListModel::data(const QModelIndex &index, int nRole) const
     switch (column)
     {
       case 0:
-        return m_Data[row].second.albumTitle;
+        return m_Data[row].fileName;
       case 1:
-        return m_Data[row].second.albumArtist;
+        return m_Data[row].fileDir;
       case 2:
-        return m_Data[row].second.genre;
+        return m_Data[row].fileType;
       case 3:
-        return m_Data[row].second.trackNumber;
-      case 4:
-        return m_Data[row].second.year;
+        return QString::number( m_Data[row].fileSize ) + "Mb";
       default:
         return 0;
     }
@@ -56,7 +55,7 @@ QVariant PlayListModel::data(const QModelIndex &index, int nRole) const
 
 int PlayListModel::columnCount(const QModelIndex &parent) const
 {
-  return 5;
+  return m_HeaderSectionTitle.size();
 }
 
 int PlayListModel::rowCount(const QModelIndex &parent /* =QModelIndex() */) const
@@ -67,8 +66,13 @@ int PlayListModel::rowCount(const QModelIndex &parent /* =QModelIndex() */) cons
 Qt::ItemFlags PlayListModel::flags( const QModelIndex& index ) const
 {
   Qt::ItemFlags flags = QAbstractTableModel::flags(index);
-  return index.isValid() ? ( flags | Qt::ItemIsEditable )
+  return index.isValid() ? ( flags | Qt::ItemIsSelectable )
                          : flags;
+}
+
+QString PlayListModel::getFilePath(const QModelIndex &index) const
+{
+  return index.row() <= m_Data.size() ? m_Data[index.row()].filePath : QString();
 }
 
 QVariant PlayListModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -79,45 +83,12 @@ QVariant PlayListModel::headerData(int section, Qt::Orientation orientation, int
     return QVariant();
 }
 
-void PlayListModel::addNewMediaFile(const QString &path)
+void PlayListModel::addNewMediaFile(const SMediaFileInfo &mediaFileInfo)
 {
-beginInsertRows(QModelIndex(),m_Data.size()-1,m_Data.size()-1);
-  m_player.setMedia(QUrl::fromLocalFile(path));
-  m_player.play();
-  SMediaMetaData metaData;
-  if(m_player.isMetaDataAvailable())
-    {
-      QVariant data = m_player.metaData(QMediaMetaData::AlbumTitle);
-      metaData.albumTitle = data.isNull() ? QString() : data.toString();
+  beginInsertRows(QModelIndex(),m_Data.size()-1,m_Data.size()-1);
 
-      data = m_player.metaData(QMediaMetaData::AlbumArtist);
-      metaData.albumArtist = data.isNull() ? QString() : data.toString();
+    m_Data.insert(m_Data.size(), mediaFileInfo);
 
-      data = m_player.metaData(QMediaMetaData::Year);
-      metaData.year = data.isNull() ? 0 : data.toInt();
+  endInsertRows();
 
-      data = m_player.metaData(QMediaMetaData::Genre);
-      metaData.genre = data.isNull() ? QStringList() : data.toStringList();
-
-      data = m_player.metaData(QMediaMetaData::TrackNumber);
-      metaData.trackNumber = data.isNull() ? 0 : data.toInt();
-
-      m_Data.insert(m_Data.size(),{path,metaData});
-
-      QFileInfo file(path);
-
-    endInsertRows();
-      qDebug() <<   file;
-
-    }
-
-}
-
-void PlayListModel::play(const QModelIndex& index)
-{
-  QVariant value = index.data();
-  QMediaPlayer* player = new QMediaPlayer;
-  player->setMedia(index.data().toUrl());
-  player->setVolume(50);
-  player->play();
 }

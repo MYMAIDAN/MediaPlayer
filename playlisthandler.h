@@ -5,6 +5,8 @@
 #include <QMediaPlaylist>
 #include <QMap>
 
+#include "public.h"
+
 class PlayListHandler : public QMediaPlaylist
 {
   Q_OBJECT
@@ -12,7 +14,7 @@ public:
   PlayListHandler();
 
 public slots:
-  void addMediaFile(const QString& filePath);
+  void addMediaFile(const SMediaFileInfo& mediaFileInfo);
   void changeMediaFile(const QString& filePath);
 
 private:

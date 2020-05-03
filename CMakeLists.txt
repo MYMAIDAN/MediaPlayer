@@ -39,6 +39,7 @@ if(ANDROID)
     playercontrols.h
     playlisthandler.cpp
     playlisthandler.h
+    public.h
   )
 else()
   add_executable(MediaPlayer
@@ -54,6 +55,7 @@ else()
     playercontrols.h
     playlisthandler.cpp
     playlisthandler.h
+    public.h
   )
 endif()
 

@@ -6,6 +6,8 @@
 #include <QMediaPlaylist>
 #include <QMediaPlayer>
 
+#include "public.h"
+
 class PlayListModel : public QAbstractTableModel
 {
     Q_OBJECT
@@ -19,23 +21,16 @@ public:
     QVariant      headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
     Qt::ItemFlags flags    ( const QModelIndex &index ) const override;
 
+    QString getFilePath( const QModelIndex& index ) const;
+
 public slots:
-    void addNewMediaFile( const QString& path );
-    void play(const QModelIndex& index);
+    void addNewMediaFile( const SMediaFileInfo& mediaFileInfo );
 
 
 private:
-    struct SMediaMetaData
-    {
-      QString     albumTitle;
-      QString     albumArtist;
-      int         trackNumber;
-      QStringList genre;
-      int         year;
-    };
-    QMediaPlayer                  m_player;
-    QMap<int,QPair<QString,SMediaMetaData>>  m_Data;
-    QStringList                   m_HeaderSectionTitle;
+    QMediaPlayer                   m_player;
+    QMap<uint64_t,SMediaFileInfo>  m_Data;
+    QStringList                    m_HeaderSectionTitle;
 
 };
 

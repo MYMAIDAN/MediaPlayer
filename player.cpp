@@ -16,9 +16,12 @@ Player::Player(QWidget *parent)
 
   QTableView* listView = new QTableView();
   listView->setModel(mPlayListModel.get());
+  listView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
   QThread* searchEngineThread = new QThread();
   mMediaFilesSearchEngine->moveToThread( searchEngineThread );
+
+  qRegisterMetaType<SMediaFileInfo>();
 
   connect( searchEngineThread,&QThread::started, mMediaFilesSearchEngine.get(), &MediaFilesSearchEngine::search );
 
@@ -53,7 +56,8 @@ Player::Player(QWidget *parent)
   connect(mPlayerControls.get(),&PlayerControls::changeRate,mMediaPlayer.get(),&QMediaPlayer::setPlaybackRate);
 
   connect(listView,&QListView::doubleClicked,this,[&](const QModelIndex& index){
-      m_PlayListHandler->changeMediaFile(index.data().toUrl().path());
+      m_PlayListHandler->changeMediaFile(mPlayListModel->getFilePath(index));
+      mPlayerControls->setState(QMediaPlayer::State::PlayingState);
     }
   );
 
