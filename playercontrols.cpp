@@ -56,6 +56,7 @@
 #include <QToolButton>
 #include <QComboBox>
 #include <QAudio>
+#include <QTime>
 
 PlayerControls::PlayerControls(QWidget *parent)
     : QWidget(parent)
@@ -89,13 +90,16 @@ PlayerControls::PlayerControls(QWidget *parent)
     m_volumeSlider = new QSlider(Qt::Horizontal, this);
     m_volumeSlider->setRange(0, 100);
 
-    connect(m_volumeSlider, &QSlider::valueChanged, this, &PlayerControls::onVolumeSliderValueChanged);
+    connect(m_volumeSlider, &QSlider::valueChanged,
+            this,           &PlayerControls::onVolumeSliderValueChanged);
 
     m_durationSlider = new QSlider(Qt::Horizontal,this);
     m_durationSlider->setEnabled(true);
     m_durationSlider->setSliderDown(true);
 
-    connect(m_durationSlider,&QAbstractSlider::sliderMoved,this, &PlayerControls::durationChanged);
+    connect(m_durationSlider,&QAbstractSlider::sliderMoved,
+            this,            &PlayerControls::durationChanged
+           );
 
     m_rateBox = new QComboBox(this);
     m_rateBox->addItem("0.5x", QVariant(0.5));
@@ -103,7 +107,13 @@ PlayerControls::PlayerControls(QWidget *parent)
     m_rateBox->addItem("2.0x", QVariant(2.0));
     m_rateBox->setCurrentIndex(1);
 
-    connect(m_rateBox, QOverload<int>::of(&QComboBox::activated), this, &PlayerControls::updateRate);
+    connect( m_rateBox, QOverload<int>::of(&QComboBox::activated),
+            this,      &PlayerControls::updateRate
+           );
+    mDurationLabel = new QLabel(this);
+    mPositionLabel = new QLabel(this);
+    mDurationLabel->setText("/00.00");
+    mPositionLabel->setText("00.00");
 
     QBoxLayout *layout = new QHBoxLayout;
     layout->setContentsMargins(0, 0, 0, 0);
@@ -115,6 +125,8 @@ PlayerControls::PlayerControls(QWidget *parent)
     layout->addWidget(m_volumeSlider);
     layout->addWidget(m_rateBox);
     layout->addWidget(m_durationSlider,1);
+    layout->addWidget(mPositionLabel);
+    layout->addWidget(mDurationLabel);
     setLayout(layout);
 }
 
@@ -151,6 +163,7 @@ int PlayerControls::volume() const
                                                 QAudio::LogarithmicVolumeScale,
                                                 QAudio::LinearVolumeScale);
 
+
     return qRound(linearVolume * 100);
 }
 
@@ -159,6 +172,7 @@ void PlayerControls::setVolume(int volume)
     qreal logarithmicVolume = QAudio::convertVolume(volume / qreal(100),
                                                     QAudio::LinearVolumeScale,
                                                     QAudio::LogarithmicVolumeScale);
+
 
     m_volumeSlider->setValue(qRound(logarithmicVolume * 100));
 }
@@ -225,12 +239,42 @@ void PlayerControls::onVolumeSliderValueChanged()
     emit changeVolume(volume());
 }
 
-void PlayerControls::setDuration(uint64_t milisecond)
+void PlayerControls::setDuration( uint64_t milisecond )
 {
-  m_durationSlider->setRange(0,milisecond/1000);
+  m_durationSlider->setRange( 0, milisecond / 1000 );
+
+  uint64_t second = milisecond / 1000;
+
+  QTime totalTime( ( second / 3600 ) % 60,
+                   ( second / 60) % 60,
+                   ( second % 60 ),
+                   ( second * 1000 ) % 1000 );
+
+  QString format = "/mm:ss";
+  if( second  > 3600 )
+  {
+    format = "/hh:mm:ss";
+  }
+
+  auto str = totalTime.toString(format);
+  mDurationLabel->setText(str);
+
 }
 
-void PlayerControls::positionChanged(uint64_t milisecond)
+void PlayerControls::positionChanged( uint64_t milisecond )
 {
- m_durationSlider->setValue(milisecond/1000);
+ uint64_t second = milisecond/1000;
+ m_durationSlider->setValue( second  );
+
+ QTime currentTime((second / 3600) % 60, (second / 60) % 60,
+     second % 60, (second * 1000) % 1000);
+
+ QString format = "mm:ss";
+ if( second  > 3600 )
+ {
+   format = "hh:mm:ss";
+ }
+
+ auto str = currentTime.toString(format);
+ mPositionLabel->setText(str);
 }

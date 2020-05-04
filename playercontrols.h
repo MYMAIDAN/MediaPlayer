@@ -53,6 +53,7 @@
 
 #include <QMediaPlayer>
 #include <QWidget>
+#include <QLabel>
 
 QT_BEGIN_NAMESPACE
 class QAbstractButton;
@@ -77,7 +78,7 @@ public slots:
     void setVolume(int volume);
     void setMuted(bool muted);
     void setPlaybackRate(float rate);
-    void setDuration(u_int64_t milisecond);
+    void setDuration(uint64_t milisecond);
     void positionChanged(uint64_t milisecond);
 
 signals:
@@ -109,7 +110,9 @@ private:
     QAbstractButton *m_muteButton     = nullptr;
     QAbstractSlider *m_volumeSlider   = nullptr;
     QAbstractSlider *m_durationSlider = nullptr;
-    QComboBox *m_rateBox = nullptr;
+    QComboBox       *m_rateBox        = nullptr;
+    QLabel          *mPositionLabel   = nullptr;
+    QLabel          *mDurationLabel   = nullptr;
 };
 
 #endif // PLAYERCONTROLS_H

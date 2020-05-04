@@ -14,9 +14,12 @@ MediaFilesSearchEngine::~MediaFilesSearchEngine()
 
 void MediaFilesSearchEngine::search()
 {
-
   static QFileInfo fileInfo;
-  QDirIterator it("/Users/mykhailomaidan/Downloads",QStringList() << "*.flac", QDir::Files, QDirIterator::Subdirectories );
+  QDirIterator it( "C:\\Users",
+                   QStringList() << "*.flac",
+                   QDir::Files,
+                   QDirIterator::Subdirectories
+                  );
   while( it.hasNext() )
   {
       fileInfo.setFile( it.next() );

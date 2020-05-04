@@ -5,7 +5,7 @@
 #include <QMediaMetaData>
 #include <QDir>
 
-PlayListModel::PlayListModel(const QStringList &list, QObject *parent):
+PlayListModel::PlayListModel( [[maybe_unused]] const QStringList &list, QObject *parent):
   QAbstractTableModel(parent)
 {
 }
@@ -53,12 +53,12 @@ QVariant PlayListModel::data(const QModelIndex &index, int nRole) const
   return QVariant();
 }
 
-int PlayListModel::columnCount(const QModelIndex &parent) const
+int PlayListModel::columnCount( [[maybe_unused]] const QModelIndex &parent) const
 {
   return m_HeaderSectionTitle.size();
 }
 
-int PlayListModel::rowCount(const QModelIndex &parent /* =QModelIndex() */) const
+int PlayListModel::rowCount( [[maybe_unused]] const QModelIndex &parent /* =QModelIndex() */) const
 {
   return m_Data.size();
 }
@@ -85,7 +85,7 @@ QVariant PlayListModel::headerData(int section, Qt::Orientation orientation, int
 
 void PlayListModel::addNewMediaFile(const SMediaFileInfo &mediaFileInfo)
 {
-  beginInsertRows(QModelIndex(),m_Data.size()-1,m_Data.size()-1);
+  beginInsertRows(QModelIndex(),m_Data.size(),m_Data.size());
 
     m_Data.insert(m_Data.size(), mediaFileInfo);
 

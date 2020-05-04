@@ -9,8 +9,8 @@ PlayListHandler::PlayListHandler()
 void PlayListHandler::addMediaFile(const SMediaFileInfo &mediaFileInfo)
 {
   this->addMedia(QUrl::fromLocalFile(mediaFileInfo.filePath));
-  static uint64_t index = this->mediaCount();
-  this->mMediaFilesIndexMap.insert(mediaFileInfo.filePath,++index);
+  uint64_t index = this->mediaCount() - 1;
+  this->mMediaFilesIndexMap.insert(mediaFileInfo.filePath,index);
 
 }
 
