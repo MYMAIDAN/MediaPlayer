@@ -242,6 +242,7 @@ void PlayerControls::onVolumeSliderValueChanged()
 void PlayerControls::setDuration( uint64_t milisecond )
 {
   m_durationSlider->setRange( 0, milisecond / 1000 );
+  m_durationSlider->setSliderDown(false);
 
   uint64_t second = milisecond / 1000;
 
