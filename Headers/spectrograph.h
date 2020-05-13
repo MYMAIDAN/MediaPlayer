@@ -48,71 +48,61 @@
 **
 ****************************************************************************/
 
-#ifndef PLAYERCONTROLS_H
-#define PLAYERCONTROLS_H
+#ifndef SPECTROGRAPH_H
+#define SPECTROGRAPH_H
 
-#include <QMediaPlayer>
+#include "frequencyspectrum.h"
+
 #include <QWidget>
-#include <QLabel>
 
-QT_BEGIN_NAMESPACE
-class QAbstractButton;
-class QAbstractSlider;
-class QComboBox;
-QT_END_NAMESPACE
-
-class PlayerControls : public QWidget
+/**
+ * Widget which displays a spectrograph showing the frequency spectrum
+ * of the window of audio samples most recently analyzed by the Engine.
+ */
+class Spectrograph : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit PlayerControls(QWidget *parent = nullptr);
+    explicit Spectrograph(QWidget *parent = 0);
+    ~Spectrograph();
 
-    QMediaPlayer::State state() const;
-    int volume() const;
-    bool isMuted() const;
-    qreal playbackRate() const;
+    void setParams(int numBars, qreal lowFreq, qreal highFreq);
 
-public slots:
-    void setState(QMediaPlayer::State state);
-    void setVolume(int volume);
-    void setMuted(bool muted);
-    void setPlaybackRate(float rate);
-    void setDuration(uint64_t milisecond);
-    void positionChanged(uint64_t milisecond);
+    // QObject
+    void timerEvent(QTimerEvent *event) override;
+
+    // QWidget
+    void paintEvent(QPaintEvent *event) override;
+    void mousePressEvent(QMouseEvent *event) override;
 
 signals:
-    void play();
-    void pause();
-    void stop();
-    void next();
-    void previous();
-    void changeVolume(int volume);
-    void changeMuting(bool muting);
-    void changeRate(qreal rate);
-    void durationChanged(uint64_t value);
+    void infoMessage(const QString &message, int intervalMs);
 
-
-private slots:
-    void playClicked();
-    void muteClicked();
-    void updateRate();
-    void onVolumeSliderValueChanged();
-
+public slots:
+    void reset();
+    void spectrumChanged(const FrequencySpectrum &spectrum);
 
 private:
-    QMediaPlayer::State m_playerState = QMediaPlayer::StoppedState;
-    bool m_playerMuted = false;
-    QAbstractButton *m_playButton     = nullptr;
-    QAbstractButton *m_stopButton     = nullptr;
-    QAbstractButton *m_nextButton     = nullptr;
-    QAbstractButton *m_previousButton = nullptr;
-    QAbstractButton *m_muteButton     = nullptr;
-    QAbstractSlider *m_volumeSlider   = nullptr;
-    QAbstractSlider *m_durationSlider = nullptr;
-    QComboBox       *m_rateBox        = nullptr;
-    QLabel          *mPositionLabel   = nullptr;
-    QLabel          *mDurationLabel   = nullptr;
+    int barIndex(qreal frequency) const;
+    QPair<qreal, qreal> barRange(int barIndex) const;
+    void updateBars();
+
+    void selectBar(int index);
+
+private:
+    struct Bar {
+        Bar() : value(0.0), clipped(false) { }
+        qreal   value;
+        bool    clipped;
+    };
+
+    QVector<Bar>        m_bars;
+    int                 m_barSelected;
+    int                 m_timerId;
+    qreal               m_lowFreq;
+    qreal               m_highFreq;
+    FrequencySpectrum   m_spectrum;
 };
 
-#endif // PLAYERCONTROLS_H
+#endif // SPECTROGRAPH_H

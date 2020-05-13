@@ -16,6 +16,7 @@ public:
 public slots:
   void addMediaFile(const SMediaFileInfo& mediaFileInfo);
   void changeMediaFile(const QString& filePath);
+  QString getCurrentMediaPath();
 
 private:
   QMap<QString,uint64_t> mMediaFilesIndexMap;

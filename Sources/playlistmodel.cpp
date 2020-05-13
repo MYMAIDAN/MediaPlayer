@@ -21,7 +21,7 @@ PlayListModel::~PlayListModel()
 
 }
 
-QVariant PlayListModel::data(const QModelIndex &index, int nRole) const
+QVariant PlayListModel::data( const QModelIndex &index, int nRole ) const
 {
   auto row      = index.row();
   auto column   = index.column();
@@ -53,12 +53,12 @@ QVariant PlayListModel::data(const QModelIndex &index, int nRole) const
   return QVariant();
 }
 
-int PlayListModel::columnCount( [[maybe_unused]] const QModelIndex &parent) const
+int PlayListModel::columnCount( [[maybe_unused]] const QModelIndex &parent ) const
 {
   return m_HeaderSectionTitle.size();
 }
 
-int PlayListModel::rowCount( [[maybe_unused]] const QModelIndex &parent /* =QModelIndex() */) const
+int PlayListModel::rowCount( [[maybe_unused]] const QModelIndex &parent ) const
 {
   return m_Data.size();
 }
@@ -75,7 +75,9 @@ QString PlayListModel::getFilePath(const QModelIndex &index) const
   return index.row() <= m_Data.size() ? m_Data[index.row()].filePath : QString();
 }
 
-QVariant PlayListModel::headerData(int section, Qt::Orientation orientation, int role) const
+QVariant PlayListModel::headerData( int section,
+                                    Qt::Orientation orientation,
+                                    int role ) const
 {
     if (role == Qt::DisplayRole && orientation == Qt::Horizontal) {
         return m_HeaderSectionTitle[section];
@@ -83,7 +85,7 @@ QVariant PlayListModel::headerData(int section, Qt::Orientation orientation, int
     return QVariant();
 }
 
-void PlayListModel::addNewMediaFile(const SMediaFileInfo &mediaFileInfo)
+void PlayListModel::addNewMediaFile( const SMediaFileInfo &mediaFileInfo )
 {
   beginInsertRows(QModelIndex(),m_Data.size(),m_Data.size());
 

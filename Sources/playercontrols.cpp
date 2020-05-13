@@ -115,8 +115,19 @@ PlayerControls::PlayerControls(QWidget *parent)
     mDurationLabel->setText("/00.00");
     mPositionLabel->setText("00.00");
 
+    QBoxLayout *box = new QVBoxLayout;
+    mTrackNameLabel = new QLabel;
+    mTrackNameLabel->setText("Hello");
+    box->setContentsMargins(0, 0, 0, 0);
+    box->addWidget(mTrackNameLabel,0, Qt::AlignCenter);
+    box->addWidget(m_durationSlider);
+
+
+
     QBoxLayout *layout = new QHBoxLayout;
-    layout->setContentsMargins(0, 0, 0, 0);
+    QBoxLayout *layout2 = new QHBoxLayout;
+
+    layout->setContentsMargins(0, 20, 0, 0);
     layout->addWidget(m_stopButton);
     layout->addWidget(m_previousButton);
     layout->addWidget(m_playButton);
@@ -124,10 +135,11 @@ PlayerControls::PlayerControls(QWidget *parent)
     layout->addWidget(m_muteButton);
     layout->addWidget(m_volumeSlider);
     layout->addWidget(m_rateBox);
-    layout->addWidget(m_durationSlider,1);
     layout->addWidget(mPositionLabel);
     layout->addWidget(mDurationLabel);
-    setLayout(layout);
+    layout2->addLayout(layout);
+    layout2->addLayout(box,1);
+    setLayout(layout2);
 }
 
 QMediaPlayer::State PlayerControls::state() const
@@ -278,4 +290,9 @@ void PlayerControls::positionChanged( uint64_t milisecond )
 
  auto str = currentTime.toString(format);
  mPositionLabel->setText(str);
+}
+
+void PlayerControls::setTrackInfo(const QString &trackInfo)
+{
+    mTrackNameLabel->setText( trackInfo );
 }

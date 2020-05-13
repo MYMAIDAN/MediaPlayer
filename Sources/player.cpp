@@ -1,4 +1,5 @@
 #include "player.h"
+#include "mediafilessearchengine.h"
 #include <QHBoxLayout>
 #include <QListView>
 #include <QThread>
@@ -33,7 +34,14 @@ Player::Player(QWidget *parent)
            m_PlayListHandler.get(),       &PlayListHandler::addMediaFile );
 
   connect( mPlayerControls.get(), &PlayerControls::play,
-           mMediaPlayer.get(),    &QMediaPlayer::play );
+           this,    [this]()
+  {
+      auto  str = m_PlayListHandler->getCurrentMediaPath();
+      QFileInfo file( str );
+
+      mPlayerControls->setTrackInfo( file.fileName() );
+      mMediaPlayer->play();
+  });
 
   connect( mPlayerControls.get(),&PlayerControls::pause,
            mMediaPlayer.get(),   &QMediaPlayer::pause );
@@ -50,8 +58,8 @@ Player::Player(QWidget *parent)
   connect( mMediaPlayer.get(),    &QMediaPlayer::volumeChanged,
            mPlayerControls.get(), &PlayerControls::setVolume );
 
-  connect( mPlayerControls.get(),&PlayerControls::changeMuting,
-           mMediaPlayer.get(),   &QMediaPlayer::setMuted );
+  connect( mPlayerControls.get(), &PlayerControls::changeMuting,
+           mMediaPlayer.get(),    &QMediaPlayer::setMuted );
 
   connect( mMediaPlayer.get(),    &QMediaPlayer::mutedChanged,
            mPlayerControls.get(), &PlayerControls::setMuted );
@@ -60,7 +68,7 @@ Player::Player(QWidget *parent)
            mPlayerControls.get(), &PlayerControls::setState );
 
   connect( mPlayerControls.get(), &PlayerControls::durationChanged,
-          this,                  &Player::seek );
+          this,                   &Player::seek );
 
   connect( mMediaPlayer.get(),    &QMediaPlayer::positionChanged,
            mPlayerControls.get(), &PlayerControls::positionChanged );
@@ -74,6 +82,9 @@ Player::Player(QWidget *parent)
   connect(listView,&QListView::doubleClicked,this,[&](const QModelIndex& index)
   {
     m_PlayListHandler->changeMediaFile(mPlayListModel->getFilePath(index));
+    auto str = m_PlayListHandler->getCurrentMediaPath();
+    QFileInfo file( std::move( m_PlayListHandler->getCurrentMediaPath() ) );
+    mPlayerControls->setTrackInfo( file.fileName() );
     mMediaPlayer->play();
     mPlayerControls->setState(QMediaPlayer::State::PlayingState);
   }
@@ -88,7 +99,10 @@ Player::Player(QWidget *parent)
   searchEngineThread->start();
 
   QBoxLayout *listLayout = new QHBoxLayout();
+    spectograf = new Spectrograph(this);
+    listLayout->setContentsMargins(20,20,20,20);
   listLayout->addWidget(listView);
+  listLayout->addWidget(spectograf,1);
   QBoxLayout *controlLayout = new QHBoxLayout;
   controlLayout->setContentsMargins(0, 0, 0, 0);
   //controlLayout->addStretch(1);
@@ -96,6 +110,7 @@ Player::Player(QWidget *parent)
 
   QBoxLayout *layout = new QVBoxLayout;
   layout->addWidget(mPlayerControls.get());
+
   layout->addLayout(listLayout);
 
   setLayout(layout);

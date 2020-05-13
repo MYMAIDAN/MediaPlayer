@@ -11,52 +11,23 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# QtCreator supports the following variables for Android, which are identical to qmake Android variables.
-# Check http://doc.qt.io/qt-5/deployment-android.html for more information.
-# They need to be set before the find_package(Qt5 ...) call.
+find_package(Qt5 COMPONENTS Widgets multimedia Core REQUIRED)
+add_subdirectory("fftreal\\")
+include_directories(Headers/)
 
-#if(ANDROID)
-#    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
-#    if (ANDROID_ABI STREQUAL "armeabi-v7a")
-#        set(ANDROID_EXTRA_LIBS
-#            ${CMAKE_CURRENT_SOURCE_DIR}/path/to/libcrypto.so
-#            ${CMAKE_CURRENT_SOURCE_DIR}/path/to/libssl.so)
-#    endif()
-#endif()
-
-find_package(Qt5 COMPONENTS Widgets multimedia REQUIRED)
-
-if(ANDROID)
-  add_library(MediaPlayer SHARED
-    main.cpp
-    player.cpp
-    player.h
-    playlistmodel.cpp
-    playlistmodel.h
-    mediafilessearchengine.cpp
-    mediafilessearchengine.h
-    playercontrols.cpp
-    playercontrols.h
-    playlisthandler.cpp
-    playlisthandler.h
-    public.h
+file(GLOB HEADER
+      "Headers/*.h"
+)
+file(GLOB SOURCE
+  "Sources/*.cpp"
   )
-else()
-  add_executable(MediaPlayer
-    main.cpp
-    player.cpp
-    player.h
-    playlistmodel.cpp
-    playlistmodel.h
-    mediafilessearchengine.cpp
-    mediafilessearchengine.h
-    playlistmodel.cpp
-    playercontrols.cpp
-    playercontrols.h
-    playlisthandler.cpp
-    playlisthandler.h
-    public.h
-  )
-endif()
 
-target_link_libraries(MediaPlayer PRIVATE Qt5::Widgets Qt5::Multimedia)
+    add_executable(MediaPlayer ${HEADER}
+     ${SOURCE}
+    )
+  target_include_directories(MediaPlayer
+      PRIVATE
+          ${PROJECT_SOURCE_DIR}/Header
+  )
+
+  target_link_libraries(MediaPlayer PRIVATE Qt5::Widgets Qt5::Multimedia Qt5::Core fftreadLib)

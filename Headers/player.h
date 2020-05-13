@@ -10,6 +10,7 @@
 #include "mediafilessearchengine.h"
 #include "playercontrols.h"
 #include "playlisthandler.h"
+#include "spectrograph.h"
 
 class Player : public QWidget
 {
@@ -28,6 +29,7 @@ private:
     std::unique_ptr<PlayerControls>         mPlayerControls;
     std::unique_ptr<PlayListHandler>        m_PlayListHandler;
     std::unique_ptr<QMediaPlayer>           mMediaPlayer;
+    Spectrograph    *spectograf       = nullptr;
 
 };
 #endif // PLAYER_H
