@@ -31,7 +31,7 @@ set(HDR
 
 set(SRC fftreal_wrapper.cpp)
 
-add_library(${PROJECT_NAME} ${SRC} ${HDR} )
+add_library(${PROJECT_NAME} SHARED ${SRC} ${HDR} )
 
-target_link_libraries(${PROJECT_NAME} PRIVATE Qt5::Core )
+target_link_libraries(${PROJECT_NAME} PUBLIC Qt5::Core )
   

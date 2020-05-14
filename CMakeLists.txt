@@ -14,6 +14,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(Qt5 COMPONENTS Widgets multimedia Core REQUIRED)
 add_subdirectory("fftreal\\")
 include_directories(Headers/)
+include_directories(fftreal/`)
 
 file(GLOB HEADER
       "Headers/*.h"
@@ -28,6 +29,7 @@ file(GLOB SOURCE
   target_include_directories(MediaPlayer
       PRIVATE
           ${PROJECT_SOURCE_DIR}/Header
+          fftreal/
   )
 
-  target_link_libraries(MediaPlayer PRIVATE Qt5::Widgets Qt5::Multimedia Qt5::Core fftreadLib)
+  target_link_libraries(MediaPlayer PUBLIC Qt5::Widgets Qt5::Multimedia Qt5::Core fftreadLib)
