@@ -5,22 +5,25 @@
 #include <QThread>
 #include <QtWidgets>
 #include <QObject>
+#include "spectrum.h"
 
-Player::Player(QWidget *parent)
-    : QWidget(parent),
-      mPlayListModel(std::make_unique<PlayListModel>()),
-      mMediaFilesSearchEngine(std::make_unique<MediaFilesSearchEngine>()),
-      mPlayerControls(std::make_unique<PlayerControls>(this)),
-      m_PlayListHandler(std::make_unique<PlayListHandler>()),
-      mMediaPlayer(std::make_unique<QMediaPlayer>())
+Player::Player(QWidget *parent) :
+  QWidget(parent),
+  mPlayListModel(std::make_unique<PlayListModel>()),
+  mMediaFilesSearchEngine(std::make_unique<MediaFilesSearchEngine>()),
+  mPlayerControls(std::make_unique<PlayerControls>(this)),
+  m_PlayListHandler(std::make_unique<PlayListHandler>()),
+  mMediaPlayer(std::make_shared<QMediaPlayer>()),
+  mSpectrumEngine( std::make_unique<SpectrumEngine>( mMediaPlayer ) )
 {
-
   QTableView* listView = new QTableView();
   listView->setModel(mPlayListModel.get());
   listView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
+
   QThread* searchEngineThread = new QThread();
   mMediaFilesSearchEngine->moveToThread( searchEngineThread );
+
 
   qRegisterMetaType<SMediaFileInfo>();
 
@@ -99,8 +102,10 @@ Player::Player(QWidget *parent)
   searchEngineThread->start();
 
   QBoxLayout *listLayout = new QHBoxLayout();
-    spectograf = new Spectrograph(this);
-    listLayout->setContentsMargins(20,20,20,20);
+  spectograf = new Spectrograph(this);
+  spectograf->setParams(SpectrumNumBands, SpectrumLowFreq, SpectrumHighFreq);
+  connect( mSpectrumEngine.get(), &SpectrumEngine::spectrumChanged, spectograf, &Spectrograph::spectrumChanged );
+  listLayout->setContentsMargins(20,20,20,20);
   listLayout->addWidget(listView);
   listLayout->addWidget(spectograf,1);
   QBoxLayout *controlLayout = new QHBoxLayout;

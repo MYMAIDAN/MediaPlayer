@@ -11,6 +11,7 @@
 #include "playercontrols.h"
 #include "playlisthandler.h"
 #include "spectrograph.h"
+#include "spectrumengine.h"
 
 class Player : public QWidget
 {
@@ -28,7 +29,8 @@ private:
     std::unique_ptr<MediaFilesSearchEngine> mMediaFilesSearchEngine;
     std::unique_ptr<PlayerControls>         mPlayerControls;
     std::unique_ptr<PlayListHandler>        m_PlayListHandler;
-    std::unique_ptr<QMediaPlayer>           mMediaPlayer;
+    std::shared_ptr<QMediaPlayer>           mMediaPlayer;
+    std::unique_ptr<SpectrumEngine>         mSpectrumEngine;
     Spectrograph    *spectograf       = nullptr;
 
 };

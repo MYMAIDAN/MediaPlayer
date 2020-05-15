@@ -16,7 +16,7 @@ void MediaFilesSearchEngine::search()
 {
   static QFileInfo fileInfo;
   QDirIterator it( "C:\\Users",
-                   QStringList() << "*.flac",
+                   QStringList() << "*.flac" << "*.wav",
                    QDir::Files,
                    QDirIterator::Subdirectories
                   );
