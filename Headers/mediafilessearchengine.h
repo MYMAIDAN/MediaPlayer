@@ -1,11 +1,11 @@
-#ifndef MEDIAFILESSEARCHENGINE_H
-#define MEDIAFILESSEARCHENGINE_H
+#ifndef _MEDIAFILESSEARCHENGINE_H_
+#define _MEDIAFILESSEARCHENGINE_H_
 
 #include <QObject>
 
 #include "public.h"
 
-class MediaFilesSearchEngine :  public QObject
+class MediaFilesSearchEngine : public QObject
 {
   Q_OBJECT
 public:
@@ -22,4 +22,4 @@ private:
   SMediaFileInfo* mMediaFileInfo;
 };
 
-#endif // MEDIAFILESSEARCHENGINE_H
+#endif // _MEDIAFILESSEARCHENGINE_H_
