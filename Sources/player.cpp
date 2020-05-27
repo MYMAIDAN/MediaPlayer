@@ -6,6 +6,7 @@
 #include <QtWidgets>
 #include <QObject>
 #include "spectrum.h"
+#include "playlistcontextmenu.h"
 
 Player::Player(QWidget *parent) :
   QWidget(parent),
@@ -105,6 +106,12 @@ Player::Player(QWidget *parent) :
   spectograf = new Spectrograph(this);
   spectograf->setParams(SpectrumNumBands, SpectrumLowFreq, SpectrumHighFreq);
   connect( mSpectrumEngine.get(), &SpectrumEngine::spectrumChanged, spectograf, &Spectrograph::spectrumChanged );
+  this->setContextMenuPolicy(Qt::CustomContextMenu);
+  connect(this,&QWidget::customContextMenuRequested, this, [this](const QPoint& point){
+      qDebug() << "Hello frin context menu";
+      auto menu = PlayListContextMenu(this);
+      menu.exec(this->mapToGlobal(point));
+    });
   listLayout->setContentsMargins(20,20,20,20);
   listLayout->addWidget(listView);
   listLayout->addWidget(spectograf,1);

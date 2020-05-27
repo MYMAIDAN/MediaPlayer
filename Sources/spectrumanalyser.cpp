@@ -115,7 +115,7 @@ void SpectrumAnalyserThread::calculateSpectrum(const QByteArray &buffer,
                                                 int inputFrequency,
                                                 int bytesPerSample)
 {
-    Q_ASSERT(buffer.size() == m_numSamples * bytesPerSample);
+    //Q_ASSERT(buffer.size() == m_numSamples * bytesPerSample);
 
     // Initialize data array
     const char *ptr = buffer.constData();
@@ -202,6 +202,8 @@ void SpectrumAnalyser::setWindowFunction(WindowFunction type)
 void SpectrumAnalyser::calculate(const QByteArray &buffer,
                          const QAudioFormat &format)
 {
+
+  const QAudioFormat *forr = &format;
     // QThread::currentThread is marked 'for internal use only', but
     // we're only using it for debug output here, so it's probably OK :)
     SPECTRUMANALYSER_DEBUG << "SpectrumAnalyser::calculate"

@@ -69,10 +69,10 @@ const int    SpectrumNumBands       = 10;
 const qreal  SpectrumLowFreq        = 0.0; // Hz
 
 // Upper band of last band in the spectrum
-const qreal  SpectrumHighFreq       = 1000.0; // Hz
+const qreal  SpectrumHighFreq       = 10000; // Hz
 
 // Waveform window size in microseconds
-const qint64 WaveformWindowDuration = 500 * 1000;
+const qint64 WaveformWindowDuration = 300 * 1000;
 
 // Length of waveform tiles in bytes
 // Ideally, these would match the QAudio*::bufferSize(), but that isn't
