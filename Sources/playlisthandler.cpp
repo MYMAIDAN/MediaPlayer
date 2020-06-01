@@ -1,16 +1,26 @@
 #include "playlisthandler.h"
+
 #include <QUrl>
+#include <QDirIterator>
 
 PlayListHandler::PlayListHandler()
 {
 
 }
 
-void PlayListHandler::addMediaFile(const SMediaFileInfo &mediaFileInfo)
+void PlayListHandler::addMediaFolder( const QString& path )
 {
-  this->addMedia(QUrl::fromLocalFile(mediaFileInfo.filePath));
-  uint64_t index = this->mediaCount() - 1;
-  this->mMediaFilesIndexMap.insert(mediaFileInfo.filePath,index);
+  QDirIterator it( path,
+                   QStringList() << "*.flac" << "*.wav",
+                   QDir::Files,
+                   QDirIterator::Subdirectories
+                  );
+  while( it.hasNext() )
+  {
+    this->addMedia( QUrl::fromLocalFile( it.next() ) );
+    uint64_t index = this->mediaCount() - 1;
+    this->mMediaFilesIndexMap.insert( it.next(), index );
+  }
 }
 
 void PlayListHandler::changeMediaFile(const QString &filePath)

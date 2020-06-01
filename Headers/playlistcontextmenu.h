@@ -5,11 +5,17 @@
 #include <QWidget>
 #include <QMenu>
 
+#include "public.h"
+
 class PlayListContextMenu : public QMenu
 {
   Q_OBJECT
 public:
   explicit PlayListContextMenu( QWidget* parent = nullptr );
+  void addFolderHandler();
+
+signals:
+  void folderSelected( const QString& path );
 };
 
 #endif // _PLAYLISTCONTEXTMENU_H_
