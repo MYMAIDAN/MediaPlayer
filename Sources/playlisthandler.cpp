@@ -1,4 +1,4 @@
-#include "playlisthandler.h"
+﻿#include "playlisthandler.h"
 
 #include <QUrl>
 #include <QDirIterator>
@@ -15,11 +15,14 @@ void PlayListHandler::addMediaFolder( const QString& path )
                    QDir::Files,
                    QDirIterator::Subdirectories
                   );
+  QFileInfo file;
   while( it.hasNext() )
   {
-    this->addMedia( QUrl::fromLocalFile( it.next() ) );
+    auto next  = it.next();
+    file.setFile( next );
+    this->addMedia( QUrl::fromLocalFile( next ) );
     uint64_t index = this->mediaCount() - 1;
-    this->mMediaFilesIndexMap.insert( it.next(), index );
+    this->mMediaFilesIndexMap.insert( file.fileName(), index );
   }
 }
 

@@ -1,4 +1,4 @@
-/****************************************************************************
+﻿/****************************************************************************
 **
 ** Copyright (C) 2016 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
@@ -79,7 +79,7 @@ QVariant TreeModel::data(const QModelIndex &index, int role) const
     if (!index.isValid())
         return QVariant();
 
-    if (role != Qt::DisplayRole && role != Qt::EditRole)
+    if (role != Qt::DisplayRole)
         return QVariant();
 
     TreeItem *item = getItem(index);
@@ -92,7 +92,7 @@ Qt::ItemFlags TreeModel::flags(const QModelIndex &index) const
     if (!index.isValid())
         return Qt::NoItemFlags;
 
-    return Qt::ItemIsEditable | QAbstractItemModel::flags(index);
+    return QAbstractItemModel::flags(index);
 }
 
 TreeItem *TreeModel::getItem(const QModelIndex &index) const
@@ -210,14 +210,11 @@ int TreeModel::rowCount(const QModelIndex &parent) const
 
 bool TreeModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-    if (role != Qt::EditRole)
-        return false;
-
     TreeItem *item = getItem(index);
     bool result = item->setData(index.column(), value);
 
     if (result)
-        emit dataChanged(index, index, {Qt::DisplayRole, Qt::EditRole});
+        emit dataChanged(index, index, {Qt::DisplayRole});
 
     return result;
 }
