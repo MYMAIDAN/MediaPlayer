@@ -14,7 +14,7 @@ public:
   PlayListHandler();
 
 public slots:
-  void addMediaFile(const SMediaFileInfo& mediaFileInfo);
+  void addMediaFolder( const QString& path );
   void changeMediaFile(const QString& filePath);
   QString getCurrentMediaPath();
 

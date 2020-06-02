@@ -1,6 +1,6 @@
 ﻿/****************************************************************************
 **
-** Copyright (C) 2017 The Qt Company Ltd.
+** Copyright (C) 2016 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
 **
 ** This file is part of the examples of the Qt Toolkit.
@@ -48,65 +48,36 @@
 **
 ****************************************************************************/
 
-#ifndef FREQUENCYSPECTRUM_H
-#define FREQUENCYSPECTRUM_H
+#ifndef TREEITEM_H
+#define TREEITEM_H
 
-#include <QtCore/QVector>
+#include <QVariant>
+#include <QVector>
 
-/**
- * Represents a frequency spectrum as a series of elements, each of which
- * consists of a frequency, an amplitude and a phase.
- */
-class FrequencySpectrum
+//! [0]
+class TreeItem
 {
 public:
-  FrequencySpectrum( int numPoints = 0 );
+  explicit TreeItem( const QVector<QVariant> &data, TreeItem *parent = nullptr );
+  ~TreeItem();
 
-  struct Element
-  {
-    Element()
-        : frequency( 0.0 )
-        , amplitude( 0.0 )
-        , phase( 0.0 )
-        , clipped( false )
-    {}
-
-    /**
-         * Frequency in Hertz
-         */
-    qreal frequency;
-
-    /**
-         * Amplitude in range [0.0, 1.0]
-         */
-    qreal amplitude;
-
-    /**
-         * Phase in range [0.0, 2*PI]
-         */
-    qreal phase;
-
-    /**
-         * Indicates whether value has been clipped during spectrum analysis
-         */
-    bool clipped;
-  };
-
-  typedef QVector<Element>::iterator       iterator;
-  typedef QVector<Element>::const_iterator const_iterator;
-
-  void reset();
-
-  int            count() const;
-  Element&       operator[]( int index );
-  const Element& operator[]( int index ) const;
-  iterator       begin();
-  iterator       end();
-  const_iterator begin() const;
-  const_iterator end() const;
+  TreeItem *child( int number );
+  int       childCount() const;
+  int       columnCount() const;
+  QVariant  data( int column ) const;
+  bool      insertChildren( int position, int count, int columns );
+  bool      insertColumns( int position, int columns );
+  TreeItem *parent();
+  bool      removeChildren( int position, int count );
+  bool      removeColumns( int position, int columns );
+  int       childNumber() const;
+  bool      setData( int column, const QVariant &value );
 
 private:
-  QVector<Element> m_elements;
+  QVector<TreeItem *> childItems;
+  QVector<QVariant>   itemData;
+  TreeItem *          parentItem;
 };
+//! [0]
 
-#endif // FREQUENCYSPECTRUM_H
+#endif // TREEITEM_H
