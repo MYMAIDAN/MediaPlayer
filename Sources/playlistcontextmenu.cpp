@@ -1,14 +1,14 @@
-#include "playlistcontextmenu.h"
+﻿#include "playlistcontextmenu.h"
 
 #include <QDebug>
 #include <QFileDialog>
 #include <QDirIterator>
 
-PlayListContextMenu::PlayListContextMenu( QWidget* parent ) :
-  QMenu( parent )
+PlayListContextMenu::PlayListContextMenu( QWidget* parent )
+    : QMenu( parent )
 {
   setAttribute( Qt::WA_DeleteOnClose );
-  connect( addAction("Add folder"),&QAction::triggered, this, &PlayListContextMenu::addFolderHandler );
+  connect( addAction( "Add folder" ), &QAction::triggered, this, &PlayListContextMenu::addFolderHandler );
 }
 
 void PlayListContextMenu::addFolderHandler()

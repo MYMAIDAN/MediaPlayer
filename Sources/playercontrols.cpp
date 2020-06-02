@@ -1,4 +1,4 @@
-/****************************************************************************
+﻿/****************************************************************************
 **
 ** Copyright (C) 2017 The Qt Company Ltd.
 ** Contact: https://www.qt.io/licensing/
@@ -58,241 +58,229 @@
 #include <QAudio>
 #include <QTime>
 
-PlayerControls::PlayerControls(QWidget *parent)
-    : QWidget(parent)
+PlayerControls::PlayerControls( QWidget *parent )
+    : QWidget( parent )
 {
-    m_playButton = new QToolButton(this);
-    m_playButton->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
+  m_playButton = new QToolButton( this );
+  m_playButton->setIcon( style()->standardIcon( QStyle::SP_MediaPlay ) );
 
-    connect(m_playButton, &QAbstractButton::clicked, this, &PlayerControls::playClicked);
+  connect( m_playButton, &QAbstractButton::clicked, this, &PlayerControls::playClicked );
 
-    m_stopButton = new QToolButton(this);
-    m_stopButton->setIcon(style()->standardIcon(QStyle::SP_MediaStop));
-    m_stopButton->setEnabled(false);
+  m_stopButton = new QToolButton( this );
+  m_stopButton->setIcon( style()->standardIcon( QStyle::SP_MediaStop ) );
+  m_stopButton->setEnabled( false );
 
-    connect(m_stopButton, &QAbstractButton::clicked, this, &PlayerControls::stop);
+  connect( m_stopButton, &QAbstractButton::clicked, this, &PlayerControls::stop );
 
-    m_nextButton = new QToolButton(this);
-    m_nextButton->setIcon(style()->standardIcon(QStyle::SP_MediaSkipForward));
+  m_nextButton = new QToolButton( this );
+  m_nextButton->setIcon( style()->standardIcon( QStyle::SP_MediaSkipForward ) );
 
-    connect(m_nextButton, &QAbstractButton::clicked, this, &PlayerControls::next);
+  connect( m_nextButton, &QAbstractButton::clicked, this, &PlayerControls::next );
 
-    m_previousButton = new QToolButton(this);
-    m_previousButton->setIcon(style()->standardIcon(QStyle::SP_MediaSkipBackward));
+  m_previousButton = new QToolButton( this );
+  m_previousButton->setIcon( style()->standardIcon( QStyle::SP_MediaSkipBackward ) );
 
-    connect(m_previousButton, &QAbstractButton::clicked, this, &PlayerControls::previous);
+  connect( m_previousButton, &QAbstractButton::clicked, this, &PlayerControls::previous );
 
-    m_muteButton = new QToolButton(this);
-    m_muteButton->setIcon(style()->standardIcon(QStyle::SP_MediaVolume));
+  m_muteButton = new QToolButton( this );
+  m_muteButton->setIcon( style()->standardIcon( QStyle::SP_MediaVolume ) );
 
-    connect(m_muteButton, &QAbstractButton::clicked, this, &PlayerControls::muteClicked);
+  connect( m_muteButton, &QAbstractButton::clicked, this, &PlayerControls::muteClicked );
 
-    m_volumeSlider = new QSlider(Qt::Horizontal, this);
-    m_volumeSlider->setRange(0, 100);
+  m_volumeSlider = new QSlider( Qt::Horizontal, this );
+  m_volumeSlider->setRange( 0, 100 );
 
-    connect(m_volumeSlider, &QSlider::valueChanged,
-            this,           &PlayerControls::onVolumeSliderValueChanged);
+  connect( m_volumeSlider, &QSlider::valueChanged, this, &PlayerControls::onVolumeSliderValueChanged );
 
-    m_durationSlider = new QSlider(Qt::Horizontal,this);
-    m_durationSlider->setEnabled(true);
-    m_durationSlider->setSliderDown(true);
+  m_durationSlider = new QSlider( Qt::Horizontal, this );
+  m_durationSlider->setEnabled( true );
+  m_durationSlider->setSliderDown( true );
 
-    connect(m_durationSlider,&QAbstractSlider::sliderMoved,
-            this,            &PlayerControls::durationChanged
-           );
+  connect( m_durationSlider, &QAbstractSlider::sliderMoved, this, &PlayerControls::durationChanged );
 
-    m_rateBox = new QComboBox(this);
-    m_rateBox->addItem("0.5x", QVariant(0.5));
-    m_rateBox->addItem("1.0x", QVariant(1.0));
-    m_rateBox->addItem("2.0x", QVariant(2.0));
-    m_rateBox->setCurrentIndex(1);
+  m_rateBox = new QComboBox( this );
+  m_rateBox->addItem( "0.5x", QVariant( 0.5 ) );
+  m_rateBox->addItem( "1.0x", QVariant( 1.0 ) );
+  m_rateBox->addItem( "2.0x", QVariant( 2.0 ) );
+  m_rateBox->setCurrentIndex( 1 );
 
-    connect( m_rateBox, QOverload<int>::of(&QComboBox::activated),
-            this,      &PlayerControls::updateRate
-           );
-    mDurationLabel = new QLabel(this);
-    mPositionLabel = new QLabel(this);
-    mDurationLabel->setText("/00.00");
-    mPositionLabel->setText("00.00");
+  connect( m_rateBox, QOverload<int>::of( &QComboBox::activated ), this, &PlayerControls::updateRate );
+  mDurationLabel = new QLabel( this );
+  mPositionLabel = new QLabel( this );
+  mDurationLabel->setText( "/00.00" );
+  mPositionLabel->setText( "00.00" );
 
-    QBoxLayout *box = new QVBoxLayout;
-    mTrackNameLabel = new QLabel;
-    mTrackNameLabel->setText("Hello");
-    box->setContentsMargins(0, 0, 0, 0);
-    box->addWidget(mTrackNameLabel,0, Qt::AlignCenter);
-    box->addWidget(m_durationSlider);
+  QBoxLayout *box = new QVBoxLayout;
+  mTrackNameLabel = new QLabel;
+  mTrackNameLabel->setText( "Hello" );
+  box->setContentsMargins( 0, 0, 0, 0 );
+  box->addWidget( mTrackNameLabel, 0, Qt::AlignCenter );
+  box->addWidget( m_durationSlider );
 
+  QBoxLayout *layout  = new QHBoxLayout;
+  QBoxLayout *layout2 = new QHBoxLayout;
 
-
-    QBoxLayout *layout = new QHBoxLayout;
-    QBoxLayout *layout2 = new QHBoxLayout;
-
-    layout->setContentsMargins(0, 20, 0, 0);
-    layout->addWidget(m_stopButton);
-    layout->addWidget(m_previousButton);
-    layout->addWidget(m_playButton);
-    layout->addWidget(m_nextButton);
-    layout->addWidget(m_muteButton);
-    layout->addWidget(m_volumeSlider);
-    layout->addWidget(m_rateBox);
-    layout->addWidget(mPositionLabel);
-    layout->addWidget(mDurationLabel);
-    layout2->addLayout(layout);
-    layout2->addLayout(box,1);
-    setLayout(layout2);
+  layout->setContentsMargins( 0, 20, 0, 0 );
+  layout->addWidget( m_stopButton );
+  layout->addWidget( m_previousButton );
+  layout->addWidget( m_playButton );
+  layout->addWidget( m_nextButton );
+  layout->addWidget( m_muteButton );
+  layout->addWidget( m_volumeSlider );
+  layout->addWidget( m_rateBox );
+  layout->addWidget( mPositionLabel );
+  layout->addWidget( mDurationLabel );
+  layout2->addLayout( layout );
+  layout2->addLayout( box, 1 );
+  setLayout( layout2 );
 }
 
 QMediaPlayer::State PlayerControls::state() const
 {
-    return m_playerState;
+  return m_playerState;
 }
 
-void PlayerControls::setState(QMediaPlayer::State state)
+void PlayerControls::setState( QMediaPlayer::State state )
 {
-    if (state != m_playerState) {
-        m_playerState = state;
+  if( state != m_playerState )
+  {
+    m_playerState = state;
 
-        switch (state) {
-        case QMediaPlayer::StoppedState:
-            m_stopButton->setEnabled(false);
-            m_playButton->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
-            break;
-        case QMediaPlayer::PlayingState:
-            m_stopButton->setEnabled(true);
-            m_playButton->setIcon(style()->standardIcon(QStyle::SP_MediaPause));
-            break;
-        case QMediaPlayer::PausedState:
-            m_stopButton->setEnabled(true);
-            m_playButton->setIcon(style()->standardIcon(QStyle::SP_MediaPlay));
-            break;
-        }
+    switch( state )
+    {
+    case QMediaPlayer::StoppedState:
+      m_stopButton->setEnabled( false );
+      m_playButton->setIcon( style()->standardIcon( QStyle::SP_MediaPlay ) );
+      break;
+    case QMediaPlayer::PlayingState:
+      m_stopButton->setEnabled( true );
+      m_playButton->setIcon( style()->standardIcon( QStyle::SP_MediaPause ) );
+      break;
+    case QMediaPlayer::PausedState:
+      m_stopButton->setEnabled( true );
+      m_playButton->setIcon( style()->standardIcon( QStyle::SP_MediaPlay ) );
+      break;
     }
+  }
 }
 
 int PlayerControls::volume() const
 {
-    qreal linearVolume =  QAudio::convertVolume(m_volumeSlider->value() / qreal(100),
-                                                QAudio::LogarithmicVolumeScale,
-                                                QAudio::LinearVolumeScale);
+  qreal linearVolume = QAudio::convertVolume(
+      m_volumeSlider->value() / qreal( 100 ), QAudio::LogarithmicVolumeScale, QAudio::LinearVolumeScale );
 
-
-    return qRound(linearVolume * 100);
+  return qRound( linearVolume * 100 );
 }
 
-void PlayerControls::setVolume(int volume)
+void PlayerControls::setVolume( int volume )
 {
-    qreal logarithmicVolume = QAudio::convertVolume(volume / qreal(100),
-                                                    QAudio::LinearVolumeScale,
-                                                    QAudio::LogarithmicVolumeScale);
+  qreal logarithmicVolume =
+      QAudio::convertVolume( volume / qreal( 100 ), QAudio::LinearVolumeScale, QAudio::LogarithmicVolumeScale );
 
-
-    m_volumeSlider->setValue(qRound(logarithmicVolume * 100));
+  m_volumeSlider->setValue( qRound( logarithmicVolume * 100 ) );
 }
 
 bool PlayerControls::isMuted() const
 {
-    return m_playerMuted;
+  return m_playerMuted;
 }
 
-void PlayerControls::setMuted(bool muted)
+void PlayerControls::setMuted( bool muted )
 {
-    if (muted != m_playerMuted) {
-        m_playerMuted = muted;
+  if( muted != m_playerMuted )
+  {
+    m_playerMuted = muted;
 
-        m_muteButton->setIcon(style()->standardIcon(muted
-                ? QStyle::SP_MediaVolumeMuted
-                : QStyle::SP_MediaVolume));
-    }
+    m_muteButton->setIcon( style()->standardIcon( muted ? QStyle::SP_MediaVolumeMuted : QStyle::SP_MediaVolume ) );
+  }
 }
 
 void PlayerControls::playClicked()
 {
-    switch (m_playerState) {
-    case QMediaPlayer::StoppedState:
-    case QMediaPlayer::PausedState:
-        emit play();
-        break;
-    case QMediaPlayer::PlayingState:
-        emit pause();
-        break;
-    }
+  switch( m_playerState )
+  {
+  case QMediaPlayer::StoppedState:
+  case QMediaPlayer::PausedState:
+    emit play();
+    break;
+  case QMediaPlayer::PlayingState:
+    emit pause();
+    break;
+  }
 }
 
 void PlayerControls::muteClicked()
 {
-    emit changeMuting(!m_playerMuted);
+  emit changeMuting( !m_playerMuted );
 }
 
 qreal PlayerControls::playbackRate() const
 {
-    return m_rateBox->itemData(m_rateBox->currentIndex()).toDouble();
+  return m_rateBox->itemData( m_rateBox->currentIndex() ).toDouble();
 }
 
-void PlayerControls::setPlaybackRate(float rate)
+void PlayerControls::setPlaybackRate( float rate )
 {
-    for (int i = 0; i < m_rateBox->count(); ++i) {
-        if (qFuzzyCompare(rate, float(m_rateBox->itemData(i).toDouble()))) {
-            m_rateBox->setCurrentIndex(i);
-            return;
-        }
+  for( int i = 0; i < m_rateBox->count(); ++i )
+  {
+    if( qFuzzyCompare( rate, float( m_rateBox->itemData( i ).toDouble() ) ) )
+    {
+      m_rateBox->setCurrentIndex( i );
+      return;
     }
+  }
 
-    m_rateBox->addItem(QString("%1x").arg(rate), QVariant(rate));
-    m_rateBox->setCurrentIndex(m_rateBox->count() - 1);
+  m_rateBox->addItem( QString( "%1x" ).arg( rate ), QVariant( rate ) );
+  m_rateBox->setCurrentIndex( m_rateBox->count() - 1 );
 }
 
 void PlayerControls::updateRate()
 {
-    emit changeRate(playbackRate());
+  emit changeRate( playbackRate() );
 }
 
 void PlayerControls::onVolumeSliderValueChanged()
 {
-    emit changeVolume(volume());
+  emit changeVolume( volume() );
 }
 
 void PlayerControls::setDuration( uint64_t milisecond )
 {
   m_durationSlider->setRange( 0, milisecond / 1000 );
-  m_durationSlider->setSliderDown(false);
+  m_durationSlider->setSliderDown( false );
 
   uint64_t second = milisecond / 1000;
 
-  QTime totalTime( ( second / 3600 ) % 60,
-                   ( second / 60) % 60,
-                   ( second % 60 ),
-                   ( second * 1000 ) % 1000 );
+  QTime totalTime( ( second / 3600 ) % 60, ( second / 60 ) % 60, ( second % 60 ), ( second * 1000 ) % 1000 );
 
   QString format = "/mm:ss";
-  if( second  > 3600 )
+  if( second > 3600 )
   {
     format = "/hh:mm:ss";
   }
 
-  auto str = totalTime.toString(format);
-  mDurationLabel->setText(str);
-
+  auto str = totalTime.toString( format );
+  mDurationLabel->setText( str );
 }
 
 void PlayerControls::positionChanged( uint64_t milisecond )
 {
- uint64_t second = milisecond/1000;
- m_durationSlider->setValue( second  );
+  uint64_t second = milisecond / 1000;
+  m_durationSlider->setValue( second );
 
- QTime currentTime((second / 3600) % 60, (second / 60) % 60,
-     second % 60, (second * 1000) % 1000);
+  QTime currentTime( ( second / 3600 ) % 60, ( second / 60 ) % 60, second % 60, ( second * 1000 ) % 1000 );
 
- QString format = "mm:ss";
- if( second  > 3600 )
- {
-   format = "hh:mm:ss";
- }
+  QString format = "mm:ss";
+  if( second > 3600 )
+  {
+    format = "hh:mm:ss";
+  }
 
- auto str = currentTime.toString(format);
- mPositionLabel->setText(str);
+  auto str = currentTime.toString( format );
+  mPositionLabel->setText( str );
 }
 
-void PlayerControls::setTrackInfo(const QString &trackInfo)
+void PlayerControls::setTrackInfo( const QString &trackInfo )
 {
-    mTrackNameLabel->setText( trackInfo );
+  mTrackNameLabel->setText( trackInfo );
 }
