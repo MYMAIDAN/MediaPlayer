@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+﻿cmake_minimum_required(VERSION 3.5)
 
 project(MediaPlayer LANGUAGES CXX)
 
@@ -25,6 +25,7 @@ file(GLOB SOURCE
 
     add_executable(MediaPlayer ${HEADER}
      ${SOURCE}
+     Resource/resource.qrc
     )
   target_include_directories(MediaPlayer
       PRIVATE

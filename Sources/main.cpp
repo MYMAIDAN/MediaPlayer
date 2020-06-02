@@ -11,6 +11,7 @@ int main( int argc, char *argv[] )
 {
   QApplication a( argc, argv );
   Player       w;
+  QApplication::setWindowIcon( QIcon( ":/images.png" ) );
   w.show();
   return a.exec();
 }
