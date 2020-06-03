@@ -1,5 +1,12 @@
 <RCC>
     <qresource prefix="/">
         <file>images.png</file>
+        <file>play_icon.svg</file>
+        <file>pause_icon.svg</file>
+        <file>sound_icon.svg</file>
+        <file>mute_icon.svg</file>
+        <file>next_icon.svg</file>
+        <file>previos_icon.svg</file>
+        <file>stop_icon.svg</file>
     </qresource>
 </RCC>

@@ -62,28 +62,28 @@ PlayerControls::PlayerControls( QWidget *parent )
     : QWidget( parent )
 {
   m_playButton = new QToolButton( this );
-  m_playButton->setIcon( style()->standardIcon( QStyle::SP_MediaPlay ) );
+  m_playButton->setIcon( QIcon( ":/play_icon.svg" ) );
 
   connect( m_playButton, &QAbstractButton::clicked, this, &PlayerControls::playClicked );
 
   m_stopButton = new QToolButton( this );
-  m_stopButton->setIcon( style()->standardIcon( QStyle::SP_MediaStop ) );
+  m_stopButton->setIcon( QIcon( ":/stop_icon.svg" ) );
   m_stopButton->setEnabled( false );
 
   connect( m_stopButton, &QAbstractButton::clicked, this, &PlayerControls::stop );
 
   m_nextButton = new QToolButton( this );
-  m_nextButton->setIcon( style()->standardIcon( QStyle::SP_MediaSkipForward ) );
+  m_nextButton->setIcon( QIcon( ":/next_icon.svg" ) );
 
   connect( m_nextButton, &QAbstractButton::clicked, this, &PlayerControls::next );
 
   m_previousButton = new QToolButton( this );
-  m_previousButton->setIcon( style()->standardIcon( QStyle::SP_MediaSkipBackward ) );
+  m_previousButton->setIcon( QIcon( ":/previos_icon.svg" ) );
 
   connect( m_previousButton, &QAbstractButton::clicked, this, &PlayerControls::previous );
 
   m_muteButton = new QToolButton( this );
-  m_muteButton->setIcon( style()->standardIcon( QStyle::SP_MediaVolume ) );
+  m_muteButton->setIcon( QIcon( ":/sound_icon.svg" ) );
 
   connect( m_muteButton, &QAbstractButton::clicked, this, &PlayerControls::muteClicked );
 
@@ -150,15 +150,15 @@ void PlayerControls::setState( QMediaPlayer::State state )
     {
     case QMediaPlayer::StoppedState:
       m_stopButton->setEnabled( false );
-      m_playButton->setIcon( style()->standardIcon( QStyle::SP_MediaPlay ) );
+      m_playButton->setIcon( QIcon( ":/play_icon.svg" ) );
       break;
     case QMediaPlayer::PlayingState:
       m_stopButton->setEnabled( true );
-      m_playButton->setIcon( style()->standardIcon( QStyle::SP_MediaPause ) );
+      m_playButton->setIcon( QIcon( ":/pause_icon.svg" ) );
       break;
     case QMediaPlayer::PausedState:
       m_stopButton->setEnabled( true );
-      m_playButton->setIcon( style()->standardIcon( QStyle::SP_MediaPlay ) );
+      m_playButton->setIcon( QIcon( ":/play_icon.svg" ) );
       break;
     }
   }
@@ -166,8 +166,9 @@ void PlayerControls::setState( QMediaPlayer::State state )
 
 int PlayerControls::volume() const
 {
-  qreal linearVolume = QAudio::convertVolume(
-      m_volumeSlider->value() / qreal( 100 ), QAudio::LogarithmicVolumeScale, QAudio::LinearVolumeScale );
+  qreal linearVolume = QAudio::convertVolume( m_volumeSlider->value() / qreal( 100 ),
+                                              QAudio::LogarithmicVolumeScale,
+                                              QAudio::LinearVolumeScale );
 
   return qRound( linearVolume * 100 );
 }
@@ -191,7 +192,7 @@ void PlayerControls::setMuted( bool muted )
   {
     m_playerMuted = muted;
 
-    m_muteButton->setIcon( style()->standardIcon( muted ? QStyle::SP_MediaVolumeMuted : QStyle::SP_MediaVolume ) );
+    m_muteButton->setIcon( muted ? QIcon( ":/mute_icon.svg" ) : QIcon( ":/sound_icon.svg" ) );
   }
 }
 
